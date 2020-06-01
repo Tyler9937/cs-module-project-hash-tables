@@ -21,7 +21,8 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
+        self.capacity = capacity
+        self.hash_list = [None] * capacity
 
 
     def get_num_slots(self):
@@ -34,7 +35,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+
+        return len(self.hash_list)
 
 
     def get_load_factor(self):
@@ -43,7 +45,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.get_num_slots() / self.capacity
 
 
     def fnv1(self, key):
@@ -62,7 +64,11 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381
+
+        for char in key:
+            hash = ((hash << 5) + hash) + ord(char)
+        return hash & 0xFFFFFFFF
 
 
     def hash_index(self, key):
@@ -81,7 +87,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        slot = self.hash_index(key)
+        self.hash_list[slot] = (key, value)
 
 
     def delete(self, key):
@@ -92,7 +99,10 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        try:
+            return self.hash_list.pop(self.hash_index(key))
+        except ValueError:
+            print('key not found')
 
 
     def get(self, key):
@@ -103,7 +113,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        if self.hash_list[self.hash_index(key)] is not None:
+            key, value = self.hash_list[self.hash_index(key)]
+            return value
+        else:
+            return None
 
 
     def resize(self, new_capacity):
@@ -113,7 +127,16 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        self.capacity = new_capacity
+        temp_list = self.hash_list
+        print(temp_list)
+        self.hash_list = [None] * self.capacity
+        for item in temp_list:
+            if item is not None:
+                print('hi',item)
+                slot = self.hash_index(item[0])
+                self.hash_list[slot] = (item[0], item[1])
+
 
 
 
@@ -142,7 +165,7 @@ if __name__ == "__main__":
     # Test resizing
     old_capacity = ht.get_num_slots()
     ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    new_capacity = 8 # ht.get_num_slots()
 
     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
