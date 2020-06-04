@@ -1,4 +1,4 @@
-class HashTableEntry:
+class Node:
     """
     Linked List hash table key/value pair
     """
@@ -7,6 +7,50 @@ class HashTableEntry:
         self.value = value
         self.next = None
 
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def __str__(self):
+        pass
+
+    def insert_at_head(self, node):
+        node.next = self.head
+        self.head = node
+
+    def find(self, value):
+        cur = self.head
+        while cur is not None:
+            if cur.key == value:
+                return cur
+            
+            cur = cur.next
+
+        return None
+
+    def delete(self, value):
+        cur = self.head
+        # case if value is in head
+        if cur.key == value:
+            self.head = self.head.next
+            return cur
+        
+        # general case
+        prev = cur
+        cur = cur.next
+
+        while cur is not None:
+
+
+            if cur.key == value:
+                prev.next = cur.next
+                return cur
+            else:
+                prev = prev.next
+                cur = cur.next
+        
+        return None
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
@@ -22,7 +66,8 @@ class HashTable:
 
     def __init__(self, capacity):
         self.capacity = capacity
-        self.hash_list = [None] * capacity
+        self.hash_list = [LinkedList()] * capacity
+        self.count = 0
 
 
     def get_num_slots(self):
@@ -36,7 +81,7 @@ class HashTable:
         Implement this.
         """
 
-        return len(self.hash_list)
+        return self.capacity #len(self.hash_list)
 
 
     def get_load_factor(self):
@@ -45,7 +90,7 @@ class HashTable:
 
         Implement this.
         """
-        return self.get_num_slots() / self.capacity
+        return self.count / self.capacity
 
 
     def fnv1(self, key):
@@ -88,7 +133,33 @@ class HashTable:
         Implement this.
         """
         slot = self.hash_index(key)
-        self.hash_list[slot] = (key, value)
+        ll = self.hash_list[slot]
+        new_node = Node(key, value)
+        ll.insert_at_head(new_node)
+        self.count += 1
+
+        
+        if self.get_load_factor() > 7.0:
+            print('hi')
+            self.resize(self.capacity * 2)
+
+    def put2(self, key, value):
+        """
+        Store the value with the given key.
+
+        Hash collisions should be handled with Linked List Chaining.
+
+        Implement this.
+        """
+        slot = self.hash_index(key)
+        ll = self.hash_list[slot]
+        new_node = Node(key, value)
+        ll.insert_at_head(new_node)
+        self.count += 1
+
+        
+
+
 
 
     def delete(self, key):
@@ -99,10 +170,12 @@ class HashTable:
 
         Implement this.
         """
-        try:
-            return self.hash_list.pop(self.hash_index(key))
-        except ValueError:
-            print('key not found')
+        
+        ll = self.hash_list[self.hash_index(key)]
+        self.count -= 1
+        return ll.delete(key)
+
+        
 
 
     def get(self, key):
@@ -113,12 +186,19 @@ class HashTable:
 
         Implement this.
         """
-        if self.hash_list[self.hash_index(key)] is not None:
-            key, value = self.hash_list[self.hash_index(key)]
-            return value
+        
+        ll = self.hash_list[self.hash_index(key)]
+        node = ll.find(key)
+        if node is not None:
+            return node.value
         else:
             return None
+        
 
+
+            
+        
+        
 
     def resize(self, new_capacity):
         """
@@ -127,21 +207,29 @@ class HashTable:
 
         Implement this.
         """
+        
         self.capacity = new_capacity
         temp_list = self.hash_list
-        print(temp_list)
-        self.hash_list = [None] * self.capacity
-        for item in temp_list:
-            if item is not None:
-                print('hi',item)
-                slot = self.hash_index(item[0])
-                self.hash_list[slot] = (item[0], item[1])
+        
+        self.hash_list = [LinkedList()] * self.capacity
+        for ll in temp_list:
+            cur = ll.head
+            if ll.head is None:
+                pass
+
+            while cur is not None:
+
+                self.put2(cur.key, cur.value)
+                cur = cur.next
+
+
 
 
 
 
 if __name__ == "__main__":
     ht = HashTable(8)
+    
 
     ht.put("line_1", "'Twas brillig, and the slithy toves")
     ht.put("line_2", "Did gyre and gimble in the wabe:")
@@ -155,17 +243,41 @@ if __name__ == "__main__":
     ht.put("line_10", "Long time the manxome foe he sought--")
     ht.put("line_11", "So rested he by the Tumtum tree")
     ht.put("line_12", "And stood awhile in thought.")
+    ht.put("line_13", "And stood awhile in thought.")
+    ht.put("line_14", "And stood awhile in thought.")
+    ht.put("line_15", "And stood awhile in thought.")
+    ht.put("line_16", "And stood awhile in thought.")
+    ht.put("line_17", "And stood awhile in thought.")
+    ht.put("line_18", "And stood awhile in thought.")
+    ht.put("line_19", "And stood awhile in thought.")
+    ht.put("line_20", "And stood awhile in thought.")
+    ht.put("line_21", "And stood awhile in thought.")
+    ht.put("line_22", "And stood awhile in thought.")
+    ht.put("line_23", "And stood awhile in thought.")
+    ht.put("line_24", "And stood awhile in thought.")
+    ht.put("line_25", "And stood awhile in thought.")
+    ht.put("line_26", "And stood awhile in thought.")
+    ht.put("line_27", "And stood awhile in thought.")
+    ht.put("line_28", "And stood awhile in thought.")
+    ht.put("line_29", "And stood awhile in thought.")
+    ht.put("line_30", "And stood awhile in thought.")
+    ht.put("line_31", "And stood awhile in thought.")
+    ht.put("line_32", "And stood awhile in thought.")
+    ht.put("line_33", "And stood awhile in thought.")
+    ht.put("line_34", "And stood awhile in thought.")
 
     print("")
-
+    
     # Test storing beyond capacity
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
 
     # Test resizing
     old_capacity = ht.get_num_slots()
+    print(ht.get_load_factor())
     ht.resize(ht.capacity * 2)
-    new_capacity = 8 # ht.get_num_slots()
+    new_capacity = ht.get_num_slots()
+    print(ht.get_load_factor())
 
     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
@@ -174,3 +286,4 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     print("")
+    print(ht.get_load_factor())
