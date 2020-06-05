@@ -1,5 +1,18 @@
 def word_count(s):
-    # Your code here
+    cache = {}
+    for symbol in ['"', ':', ';', ',', '.', '-', '+', '=', '/',  "\\", "\ ", '|', '[', ']', '{', '}', '(', ')', '*', '^', '&']:
+        s = s.replace(symbol, '')
+    word_list = s.split()
+    for word in word_list:
+        word = word.lower()
+        if word in cache:
+            cache[word] += 1
+        else:
+            cache[word] = 1
+
+    return cache
+
+
 
 
 
